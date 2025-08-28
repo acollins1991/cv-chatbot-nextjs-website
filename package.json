@@ -9,7 +9,7 @@
     "lint": "biome check",
     "format": "biome format --write",
     "test": "vitest",
-    "prepare": "husky"
+    "prepare": "husky && bash -c 'chmod ug+x .husky/*'"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
