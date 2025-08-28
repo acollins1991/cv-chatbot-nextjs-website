@@ -6,7 +6,7 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": ["biomejs.biome-vscode"]
+      "extensions": ["biomejs.biome-vscode","hashicorp.terraform"]
     }
   },
   "remoteUser": "node"
