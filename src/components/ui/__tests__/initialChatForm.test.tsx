@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, test, vi, beforeEach } from "vitest";
-import { InitialChatForm } from "../initialChatForm";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { useAIChat } from "@/composables/useAIChat";
+import { InitialChatForm } from "../initialChatForm";
 
 // Hoist the mock call outside the describe block
 vi.mock("@/composables/useAIChat");
@@ -35,7 +35,7 @@ describe("InitialChatForm", () => {
 
     // Wait for the mock to be called
     await vi.waitFor(() => expect(sendMessage).toHaveBeenCalled());
-    
+
     // Check if it was called with the correct value
     expect(sendMessage).toHaveBeenCalledWith("This is a question");
   });

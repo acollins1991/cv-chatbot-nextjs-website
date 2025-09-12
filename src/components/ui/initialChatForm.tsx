@@ -22,9 +22,6 @@ export function InitialChatForm() {
     setLoading(true);
     try {
       const res = await sendMessage(data.question);
-
-      console.log(res)
-
       addMessage({
         text: data.question,
         sender: "User",

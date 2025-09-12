@@ -6,8 +6,9 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": ["biomejs.biome-vscode", "hashicorp.terraform"]
+      "extensions": ["biomejs.biome", "hashicorp.terraform"]
     }
   },
-  "remoteUser": "node"
+  "remoteUser": "node",
+  "postCreateCommand": "chmod +x .husky/**/*"
 }

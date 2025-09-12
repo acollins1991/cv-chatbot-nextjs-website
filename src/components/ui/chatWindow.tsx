@@ -1,5 +1,6 @@
 "use client";
 
+import Markdown from "markdown-to-jsx";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -8,12 +9,9 @@ import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/chatStore";
 import { InitialChatFormLoadingSpinner } from "./initialChatFormLoadingSpinner";
 import { Input } from "./input";
-import Markdown from 'markdown-to-jsx'
 
 export function ChatWindow({ children }: { children: React.ReactNode }) {
   const messages = useChatStore((state) => state.messages);
-
-  console.log(messages)
 
   const [width, setWidth] = useState<number>();
   const [height, setHeight] = useState<number>();
@@ -98,7 +96,6 @@ function ChatWindowInputForm() {
       });
       resetField("question");
       const res = await sendMessage(data.question);
-      console.log(res)
       addMessage(res);
     } catch (error) {
       console.error("Error sending message:", error);
