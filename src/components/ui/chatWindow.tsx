@@ -8,20 +8,23 @@ import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/chatStore";
 import { InitialChatFormLoadingSpinner } from "./initialChatFormLoadingSpinner";
 import { Input } from "./input";
+import Markdown from 'markdown-to-jsx'
 
 export function ChatWindow({ children }: { children: React.ReactNode }) {
   const messages = useChatStore((state) => state.messages);
+
+  console.log(messages)
 
   const [width, setWidth] = useState<number>();
   const [height, setHeight] = useState<number>();
   const [padding, setPadding] = useState<number>();
 
   useEffect(() => {
-    if (messages.length === 0) return;
-    setWidth(600);
-    setHeight(600);
+    if (messages.length === 0 || width) return;
+    setWidth(1000);
+    setHeight(1000);
     setPadding(16);
-  }, [messages]);
+  }, [messages, width]);
 
   return (
     <motion.div
@@ -39,7 +42,7 @@ export function ChatWindow({ children }: { children: React.ReactNode }) {
               type={msg.sender}
               success={"success" in msg ? msg.success : null}
             >
-              {msg.text}
+              <Markdown>{msg.text}</Markdown>
             </ChatWindowBubble>
           ))}
         </>
@@ -95,7 +98,8 @@ function ChatWindowInputForm() {
       });
       resetField("question");
       const res = await sendMessage(data.question);
-      addMessage(res.response);
+      console.log(res)
+      addMessage(res);
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {

@@ -23,12 +23,14 @@ export function InitialChatForm() {
     try {
       const res = await sendMessage(data.question);
 
+      console.log(res)
+
       addMessage({
         text: data.question,
         sender: "User",
         success: true,
       });
-      addMessage(res.response);
+      addMessage(res);
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {

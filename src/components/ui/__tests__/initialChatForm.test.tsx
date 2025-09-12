@@ -1,42 +1,42 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, test, vi, beforeEach } from "vitest";
 import { InitialChatForm } from "../initialChatForm";
+import { useAIChat } from "@/composables/useAIChat";
+
+// Hoist the mock call outside the describe block
+vi.mock("@/composables/useAIChat");
 
 describe("InitialChatForm", () => {
+  // Use beforeEach to reset and re-mock before each test
   beforeEach(() => {
-    vi.restoreAllMocks();
+    // Correctly mock the return value for the useAIChat composable
+    vi.mocked(useAIChat).mockReturnValue({
+      sendMessage: vi.fn().mockResolvedValue({ response: "Mocked response" }),
+    });
   });
 
-  test("Renders input and sends ai chat request", async () => {
-    // const spyFunction = vi
-    //   .fn()
-    //   .mockResolvedValue({ response: "Mocked response" });
-    // vi.doMock("@/composables/useAIChat", () => {
-    //   return {
-    //     useAIChat() {
-    //       return {
-    //         sendMessage: () => {
-    //           console.log("this happened");
-    //         },
-    //       };
-    //     },
-    //   };
-    // });
-    // render(<InitialChatForm />);
-    // const [formEl] = screen.getAllByTestId<HTMLFormElement>(
-    //   "initial-question-form",
-    // );
-    // expect(formEl).toBeDefined();
-    // const [inputEl] = screen.getAllByTestId<HTMLInputElement>(
-    //   "initial-question-input",
-    // );
-    // expect(inputEl).toBeDefined();
-    // fireEvent.input(inputEl, { target: { value: "This is a question" } });
-    // fireEvent.submit(formEl);
-    // expect(spyFunction).toHaveBeenCalled();
-    // await waitFor(() => expect(spyFunction).toHaveBeenCalledTimes(1));
-    // // expect(vi.mocked.composable.useAIChat().sendMessage).toHaveBeenCalledWith(
-    // //   "This is a question",
-    // // );
+  test("Renders input and sends ai chat request on input", async () => {
+    render(<InitialChatForm />);
+    const [formEl] = screen.getAllByTestId<HTMLFormElement>(
+      "initial-question-form",
+    );
+    const [inputEl] = screen.getAllByTestId<HTMLInputElement>(
+      "initial-question-input",
+    );
+
+    // Get a reference to the mock function after the mock is set
+    const { sendMessage } = useAIChat();
+
+    expect(formEl).toBeDefined();
+    expect(inputEl).toBeDefined();
+
+    fireEvent.input(inputEl, { target: { value: "This is a question" } });
+    fireEvent.submit(formEl);
+
+    // Wait for the mock to be called
+    await vi.waitFor(() => expect(sendMessage).toHaveBeenCalled());
+    
+    // Check if it was called with the correct value
+    expect(sendMessage).toHaveBeenCalledWith("This is a question");
   });
 });
