@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { useAIChat } from "@/composables/useAIChat";
+import { sendChatMessage } from "@/composables/useApi";
 import { useChatStore } from "@/stores/chatStore";
 import { InitialChatFormLoadingSpinner } from "./initialChatFormLoadingSpinner";
 import { Input } from "./input";
@@ -13,7 +13,6 @@ type QuestionFormValues = {
 
 export function InitialChatForm() {
   const { register, handleSubmit } = useForm<QuestionFormValues>();
-  const { sendMessage } = useAIChat();
   const { addMessage } = useChatStore();
 
   const [loading, setLoading] = useState(false);
@@ -21,13 +20,14 @@ export function InitialChatForm() {
   const sendToAI: SubmitHandler<QuestionFormValues> = async (data) => {
     setLoading(true);
     try {
-      const res = await sendMessage(data.question);
+      const res = await sendChatMessage(data.question);
       addMessage({
         text: data.question,
         sender: "User",
         success: true,
       });
-      addMessage(res);
+      const message = await res.json();
+      addMessage(message);
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {

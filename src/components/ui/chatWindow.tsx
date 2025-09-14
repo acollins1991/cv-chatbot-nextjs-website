@@ -4,7 +4,7 @@ import Markdown from "markdown-to-jsx";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { useAIChat } from "@/composables/useAIChat";
+import { sendChatMessage } from "@/composables/useApi";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/chatStore";
 import { InitialChatFormLoadingSpinner } from "./initialChatFormLoadingSpinner";
@@ -81,7 +81,6 @@ type QuestionFormValues = {
 
 function ChatWindowInputForm() {
   const { register, handleSubmit, resetField } = useForm<QuestionFormValues>();
-  const { sendMessage } = useAIChat();
   const { addMessage } = useChatStore();
 
   const [loading, setLoading] = useState(false);
@@ -95,8 +94,9 @@ function ChatWindowInputForm() {
         success: true,
       });
       resetField("question");
-      const res = await sendMessage(data.question);
-      addMessage(res);
+      const res = await sendChatMessage(data.question);
+      const message = await res.json();
+      addMessage(message);
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
