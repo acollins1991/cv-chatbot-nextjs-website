@@ -1,0 +1,33 @@
+name: Deploy to proxmox lxc
+
+on:
+  workflow_run:
+    workflows: [Node.js CI]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TAILNET_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILNET_OAUTH_CLIENT_SECRET }}
+          tags: tag:ci
+      - name: Build
+        uses: actions/checkout@v5
+      - name: Copy Files to LXC
+        run: |
+          rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='.github' --exclude=".tmp" ./ root@${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }}:/home/app
+      # - name: SSH, build, and start
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '22.18'
+      # - run: touch .env
+      # - run: echo "NEXT_PUBLIC_N8N_CHAT_WEBHOOK=${{ secrets.NEXT_PUBLIC_N8N_CHAT_WEBHOOK }}" > .env
+      # - run: npm ci
+      # - run: npm run build
