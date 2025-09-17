@@ -19,8 +19,9 @@ jobs:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
-      - name: Copy Files to LXC
+      - name: Checkout to repo
         uses: actions/checkout@v5
+      - name: Copy Files to LXC
         run: >
           ssh-keygen -R ${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }}
           rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='.github' --exclude=".tmp" ./ root@${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }}:/home/app
