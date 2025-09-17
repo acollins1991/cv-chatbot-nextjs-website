@@ -21,6 +21,11 @@ jobs:
           tags: tag:ci
       - name: Checkout to repo
         uses: actions/checkout@v5
+      - name: Set up SSH directory and known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts # Ensure correct permissions
       - name: Copy Files to LXC
         run: |
           ssh-keyscan ${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }} >> ~/.ssh/known_hosts
