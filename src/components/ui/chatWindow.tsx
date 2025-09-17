@@ -80,6 +80,7 @@ type QuestionFormValues = {
 };
 
 function ChatWindowInputForm() {
+  console.log("testing123");
   const { register, handleSubmit, resetField } = useForm<QuestionFormValues>();
   const { addMessage } = useChatStore();
 
