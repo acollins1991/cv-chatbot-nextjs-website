@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_command: ["npm lint", "npm test"]
+        node_command: ["npm run lint", "npm run test"]
     steps:
       - uses: actions/checkout@v5
       - name: Use Node.js
