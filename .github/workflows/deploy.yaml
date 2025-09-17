@@ -14,8 +14,8 @@ jobs:
       - name: Tailscale
         uses: tailscale/github-action@v3
         with:
-          oauth-client-id: ${{ secrets.TAILNET_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TAILNET_OAUTH_CLIENT_SECRET }}
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
       - name: Build
         uses: actions/checkout@v5
