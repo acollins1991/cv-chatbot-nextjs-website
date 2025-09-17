@@ -1,11 +1,12 @@
 name: Deploy to proxmox lxc
-
 on:
   workflow_run:
-    workflows: [Node.js CI]
-    types: [completed]
-    branches: [main]
-
+    workflows:
+      - Node.js CI
+    types:
+      - completed
+    branches:
+      - main
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -19,15 +20,6 @@ jobs:
           tags: tag:ci
       - name: Copy Files to LXC
         uses: actions/checkout@v5
-        run: |
+        run: >
           ssh-keygen -R ${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }}
           rsync -avz --delete --exclude='.git' --exclude='node_modules' --exclude='.github' --exclude=".tmp" ./ root@${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }}:/home/app
-      # - name: SSH, build, and start
-      # - name: Set up Node.js
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '22.18'
-      # - run: touch .env
-      # - run: echo "NEXT_PUBLIC_N8N_CHAT_WEBHOOK=${{ secrets.NEXT_PUBLIC_N8N_CHAT_WEBHOOK }}" > .env
-      # - run: npm ci
-      # - run: npm run build
