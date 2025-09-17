@@ -8,6 +8,6 @@ on:
 
 jobs:
   call-reusable-build:
-    uses: ./github/workflows/lint_and_unit_tests.yaml
+    uses: ./.github/workflows/lint_and_unit_tests.yaml
     with:
       node-version: '22.18'
