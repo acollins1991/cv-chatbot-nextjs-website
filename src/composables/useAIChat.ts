@@ -27,9 +27,10 @@ export function useAIChat() {
       }),
     });
 
-    const [{ output }] = (await chatResponse.json()) as {
+    const response = await chatResponse.json();
+    const { output } = response as {
       output: string;
-    }[];
+    };
 
     return {
       id: crypto.randomUUID(),
