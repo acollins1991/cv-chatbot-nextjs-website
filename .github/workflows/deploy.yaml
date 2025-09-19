@@ -26,5 +26,4 @@ jobs:
         uses: actions/checkout@v5
       - name: Copy Files to LXC
         run: |
-          ssh-keyscan ${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }} >> ~/.ssh/known_hosts
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete --exclude='.git' --exclude='node_modules' --exclude='.github' --exclude=".tmp" ./ root@${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }}:/home/app
