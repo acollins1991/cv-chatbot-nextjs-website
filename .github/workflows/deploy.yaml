@@ -24,6 +24,9 @@ jobs:
           version: latest
       - name: Checkout to repo
         uses: actions/checkout@v5
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_N8N_CHAT_WEBHOOK=${{ secrets.NEXT_PUBLIC_N8N_CHAT_WEBHOOK }}" >> .env
       - name: Copy Files to LXC
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete --exclude='.git' --exclude='node_modules' --exclude='.github' --exclude=".tmp" ./ root@${{ vars.PROXMOX_CHATBOT_WEBSITE_LXC_TAILSCALE_NAME }}:/home/app
