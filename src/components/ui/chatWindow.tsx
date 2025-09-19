@@ -1,125 +1,77 @@
 "use client";
 
-import Markdown from "markdown-to-jsx";
-import { motion } from "motion/react";
-import { useEffect, useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import type { ChatStatus } from "ai";
+import { useState } from "react";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@/components/ui/shadcn-io/ai/conversation";
+import { Message, MessageContent } from "@/components/ui/shadcn-io/ai/message";
 import { sendChatMessage } from "@/composables/useApi";
-import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/chatStore";
-import { InitialChatFormLoadingSpinner } from "./initialChatFormLoadingSpinner";
-import { Input } from "./input";
+import {
+  PromptInput,
+  PromptInputSubmit,
+  PromptInputTextarea,
+} from "./shadcn-io/ai/prompt-input";
+import { Response } from "./shadcn-io/ai/response";
 
-export function ChatWindow({ children }: { children: React.ReactNode }) {
+export function ChatWindow() {
   const messages = useChatStore((state) => state.messages);
-
-  const [width, setWidth] = useState<number>();
-  const [height, setHeight] = useState<number>();
-  const [padding, setPadding] = useState<number>();
-
-  useEffect(() => {
-    if (messages.length === 0 || width) return;
-    setWidth(1000);
-    setHeight(1000);
-    setPadding(16);
-  }, [messages, width]);
-
-  return (
-    <motion.div
-      animate={{ height, width, padding }}
-      className="relative overflow-visible bg-stone-100 rounded-md max-w-[100%]"
-    >
-      {messages.length > 0 ? (
-        <>
-          <div className="absolute bottom-0 left-0 flex w-full">
-            <ChatWindowInputForm />
-          </div>
-          {messages.map((msg) => (
-            <ChatWindowBubble
-              key={msg.id}
-              type={msg.sender}
-              success={"success" in msg ? msg.success : null}
-            >
-              <Markdown>{msg.text}</Markdown>
-            </ChatWindowBubble>
-          ))}
-        </>
-      ) : (
-        children
-      )}
-    </motion.div>
-  );
-}
-
-type BubbleType = "User" | "AI";
-
-type ChatWindowBubbleProps = {
-  children: React.ReactNode;
-  type: BubbleType;
-  success: boolean | null;
-};
-
-function ChatWindowBubble({ children, type, success }: ChatWindowBubbleProps) {
-  return (
-    <div className="flex flex-col w-full my-1">
-      <div
-        className={cn(
-          "dark:bg-input/30 border-input flex min-h-9 w-[48%] min-w-0 rounded-md border bg-white px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none text-lg",
-          type === "User" ? "self-end" : "",
-          success === false ? "border-red-500" : "",
-        )}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
-
-type QuestionFormValues = {
-  question: string;
-};
-
-function ChatWindowInputForm() {
-  console.log("testing123");
-  const { register, handleSubmit, resetField } = useForm<QuestionFormValues>();
   const { addMessage } = useChatStore();
+  const [input, setInput] = useState("");
+  const [status, setStatus] = useState<ChatStatus>("ready");
 
-  const [loading, setLoading] = useState(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const sendToAI: SubmitHandler<QuestionFormValues> = async (data) => {
-    setLoading(true);
+    if (!input.trim()) return;
+
+    const userMessage = input;
+
     try {
+      setInput("");
+      setStatus("submitted");
       addMessage({
-        text: data.question,
+        text: userMessage,
         sender: "User",
         success: true,
       });
-      resetField("question");
-      const res = await sendChatMessage(data.question);
+      const res = await sendChatMessage(userMessage);
       const message = await res.json();
       addMessage(message);
+      setStatus("ready");
     } catch (error) {
       console.error("Error sending message:", error);
+      setStatus("error");
     } finally {
-      setLoading(false);
+      setInput("");
     }
   };
 
   return (
-    <form
-      className="relative w-full p-[16px]"
-      onSubmit={handleSubmit(sendToAI)}
-    >
-      <Input
-        {...register("question")}
-        disabled={loading}
-        placeholder="What would you like to know?"
-      />
-      {loading && (
-        <div className="absolute -right-6 -top-6">
-          <InitialChatFormLoadingSpinner />
-        </div>
-      )}
-    </form>
+    <div className="flex flex-col">
+      <Conversation className="h-full h-3/4 md:max-h-screen">
+        <ConversationContent>
+          {messages.map((message) => (
+            <Message from={message.sender} key={message.id}>
+              <MessageContent>
+                <Response>{message.text}</Response>
+              </MessageContent>
+            </Message>
+          ))}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
+      <PromptInput onSubmit={handleSubmit} className="mt-4">
+        <PromptInputTextarea
+          value={input}
+          placeholder="Say something..."
+          onChange={(e) => setInput(e.currentTarget.value)}
+        />
+        <PromptInputSubmit status={status} disabled={!input.trim()} />
+      </PromptInput>
+    </div>
   );
 }

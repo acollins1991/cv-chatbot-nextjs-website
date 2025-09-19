@@ -1,20 +1,17 @@
 import Image from "next/image";
 import { BubbleBackground } from "@/components/animate-ui/backgrounds/bubble";
 import { ChatWindow } from "@/components/ui/chatWindow";
-import { InitialChatForm } from "@/components/ui/initialChatForm";
 
 export default function Home() {
   return (
     <div className="relative">
       <BubbleBackground className="absolute h-screen w-screen" />
 
-      <div className="relative font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-        <main className="flex justify-center row-start-2 items-center sm:items-start">
-          <ChatWindow>
-            <InitialChatForm />
-          </ChatWindow>
+      <div className="relative font-sans">
+        <main className="flex justify-center row-start-1 items-center sm:items-start">
+          <ChatWindow />
         </main>
-        <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
+        <footer className="row-start-2 flex gap-[24px] flex-wrap items-center justify-center">
           <a
             className="flex items-center gap-2 hover:underline hover:underline-offset-4"
             href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
