@@ -2,8 +2,6 @@ import type { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 import type { Message } from "@/stores/chatStore";
 
-const webhookUrl = process.env.NEXT_PUBLIC_N8N_CHAT_WEBHOOK as string;
-
 async function getChatSessionCookie() {
   const cookieStore = await cookies();
   if (!cookieStore.has("anthonyCollinsChatSessionId")) {
@@ -15,6 +13,7 @@ async function getChatSessionCookie() {
 
 export function useAIChat() {
   async function sendMessage(message: string): Promise<Message> {
+    const webhookUrl = process.env.NEXT_PUBLIC_N8N_CHAT_WEBHOOK as string;
     const sessionId = await getChatSessionCookie();
     const chatResponse = await fetch(webhookUrl, {
       method: "POST",

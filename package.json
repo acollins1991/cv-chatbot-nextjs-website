@@ -9,7 +9,7 @@
     "production": "npm ci && npm run build && npm run start",
     "lint": "biome check",
     "format": "biome format --write",
-    "test": "vitest",
+    "test": "vitest --coverage",
     "prepare": "husky && bash -c 'chmod ug+x .husky/*'"
   },
   "dependencies": {
@@ -56,6 +56,7 @@
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^5.0.1",
+    "@vitest/coverage-v8": "^3.2.4",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "ollama": "^0.5.17",

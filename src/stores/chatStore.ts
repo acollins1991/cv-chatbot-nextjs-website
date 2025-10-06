@@ -39,8 +39,10 @@ export const useChatStore = create<Store & Action>()((set) => ({
     })),
   setMessageId: (index, id) => {
     set((state) => {
-      const allMessagesClone = state.messages.copyWithin(-1, 0);
-      allMessagesClone[index].id = id;
+      const allMessagesClone = [...state.messages];
+      if (allMessagesClone[index]) {
+        allMessagesClone[index].id = id;
+      }
       return { messages: allMessagesClone };
     });
   },
